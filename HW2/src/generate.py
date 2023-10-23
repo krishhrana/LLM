@@ -36,11 +36,11 @@ def generate(
     model: DecoderLM,
     device: str,
     tokenizer: tiktoken.Encoding,
-    prefixes: 'list[str]',
+    prefixes: list[str],
     batch_size: int,
     max_new_tokens: int = 32,
     temperature: float = 0.0,
-) -> 'list[str]':
+) -> list[str]:
     """Generates completions conditioned on prefixes
 
     Args:

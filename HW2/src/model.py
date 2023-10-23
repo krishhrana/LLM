@@ -55,9 +55,9 @@ class MultiHeadAttention(nn.Module):
         kT = self.k_attn(x)
         v = self.v_attn(x)
 
-        q = q.view(B, T, self.n_head, -1).permute(0, 2, 1, 3) #(B, nh, T, mini_head)
-        kT = kT.view(B, T, self.n_head, -1).permute(0, 2, 1, 3).transpose(-1, -2) #(B, nh, mini_head, T)
-        v = v.view(B, T, self.n_head, -1).permute(0, 2, 1, 3) #(B, nh, T, mini_head)
+        q = q.view(B, T, self.n_head, C // self.n_head).permute(0, 2, 1, 3) #(B, nh, T, mini_head)
+        kT = kT.view(B, T, self.n_head, C // self.n_head).permute(0, 2, 1, 3).transpose(-1, -2) #(B, nh, mini_head, T)
+        v = v.view(B, T, self.n_head, C // self.n_head).permute(0, 2, 1, 3) #(B, nh, T, mini_head)
 
         return q, kT, v
 
@@ -74,22 +74,18 @@ class MultiHeadAttention(nn.Module):
             mask = mask.unsqueeze(1)
 
         # affinities
-        affinities = q @ kT
-        unmasked_attn_logits = affinities * self.scale_factor
+        affinities = (q @ kT) * self.scale_factor
 
         # Applying Mask
         float_min = torch.finfo(q.dtype).min
-        attn_logits = unmasked_attn_logits.masked_fill(mask == 0, float_min)
+        attn_logits = affinities.masked_fill(mask == 0, float_min)
 
-        # Converting to probabilities
+        # Converting to probabilities, Getting Attention, (No Attention Dropout)
         attn_weights = F.softmax(attn_logits, dim = -1)
-        attn_weights = self.dropout(attn_weights)
+        attn = attn_weights @ v # (B, nh, T, mini_head)
 
-        # Scale value by the attention weights.
-        attn = attn_weights @ v # (B, nh, T, v_dim)
-
-        # Merging mini heads
-        attn = attn.permute(0, 2, 1, 3).reshape(B, T, -1) # (B, T, nh*v_dim)
+        # Merging mini heads ---> (B, T, nh*mini_head)
+        attn = attn.permute(0, 2, 1, 3).reshape(B, T, nh * mini_head_size) # (B, T, nh*v_dim)
         return attn
 
     def projection(self, attn: torch.FloatTensor) -> torch.FloatTensor:
@@ -145,11 +141,11 @@ class FeedForward(nn.Module):
         self.dropout to the output.
         """
 
-        down_proj = self.linear_in(x)
-        down_proj = F.gelu(down_proj)
-        up_proj = self.linear_out(down_proj)
-        z = self.dropout(up_proj)
-        return z
+        x = self.linear_in(x)
+        x = F.gelu(x)
+        x = self.linear_out(x)
+        x = self.dropout(x)
+        return x
 
 
 class DecoderBlock(nn.Module):
@@ -189,22 +185,11 @@ class DecoderBlock(nn.Module):
         https://sh-tsang.medium.com/review-pre-ln-transformer-on-layer-normalization-in-the-transformer-architecture-b6c91a89e9ab
         """
 
-        # Pre Attention LayerNorm
-        x_norm = self.ln_1(x)
+        # Pre-LayerNorm
+        x = x + self.mha(self.ln_1(x))
+        x = x + self.ff(self.ln_2(x))
 
-        # MultiHead Attention
-        weighted_values = self.mha.forward(x_norm, attention_mask=attention_mask)
-
-        # Residual Connection
-        weighted_values = weighted_values + x
-
-        # Pre FFN LayerNorm
-        weighted_values_norm = self.ln_2(weighted_values)
-
-        # FFN
-        ffn_values = self.ff(weighted_values_norm)
-
-        return ffn_values + weighted_values
+        return x
 
 
 class DecoderLM(nn.Module):
@@ -292,7 +277,7 @@ class DecoderLM(nn.Module):
         B, T = input_ids.shape
         token_embeddings = self.token_embeddings(input_ids) # (B, T, n_embed)
         if attention_mask is None:
-            positional_embeddings = self.position_embeddings(torch.arange(T).to(device)) # (T, n_embed)
+            positional_embeddings = self.position_embeddings(torch.arange(T, dtype = torch.long, device = device)) # (T, n_embed)
         else:
             masked_positions = (torch.cumsum(attention_mask, dim = 1) - 1).masked_fill(attention_mask == 0, 0) # (B, T)
             positional_embeddings = self.position_embeddings(masked_positions.to(torch.long)) #(B, T, n_embed)
@@ -327,12 +312,11 @@ class DecoderLM(nn.Module):
         Returns:
             logits: logits corresponding to the predicted next token likelihoods (B x S x V)
         """
-        pos_tok_embs = self.embed(input_ids=input_ids, attention_mask=attention_mask)
-        attn_weighted_values = pos_tok_embs
+        x = self.embed(input_ids=input_ids, attention_mask=attention_mask)
         for decoder_blocks in self.blocks:
-            attn_weighted_values = decoder_blocks.forward(attn_weighted_values, attention_mask=attention_mask)
-        attn_weighted_values_norm = self.ln(attn_weighted_values)
-        logits = self.token_logits(attn_weighted_values_norm)
+            x = decoder_blocks.forward(x, attention_mask=attention_mask)
+        x = self.ln(x)
+        logits = self.token_logits(x)
         return logits
 
     def _init_weights(self, module):
