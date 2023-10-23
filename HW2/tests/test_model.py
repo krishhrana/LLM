@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from einops import rearrange
 from model import DecoderLM, MultiHeadAttention
-device = 'cpu'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 b, s, d, h, hd = 16, 128, 768, 12, 64
 
@@ -95,5 +95,3 @@ def test_lm_forward_on_gpu():
     logits = lm(iids)
     assert logits.shape == torch.Size([2, 3, 10])
 
-
-print(test_lm_forward_on_cpu())

@@ -12,7 +12,7 @@ If you do not already have access to GPUs, you may need an AWS virtual
 1. Install conda: `bash setup-conda.sh && source ~/.bashrc`
 2. Create conda environment:
 ```bash
-conda create -n llms-class-hw2 python=3.10
+conda create -n HW2 python=3.10
 conda activate llms-class-hw2
 pip install -r requirements.txt
 pip install -e .

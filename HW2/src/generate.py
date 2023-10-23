@@ -28,7 +28,7 @@ def softmax_with_temperature(
     logits = logits / temperature
     probs = F.softmax(logits)
 
-    return ...
+    return probs
 
 
 @torch.inference_mode()
@@ -36,11 +36,11 @@ def generate(
     model: DecoderLM,
     device: str,
     tokenizer: tiktoken.Encoding,
-    prefixes: list[str],
+    prefixes: 'list[str]',
     batch_size: int,
     max_new_tokens: int = 32,
     temperature: float = 0.0,
-) -> list[str]:
+) -> 'list[str]':
     """Generates completions conditioned on prefixes
 
     Args:
@@ -60,8 +60,22 @@ def generate(
         sequences have equal length. `attention_mask` should be set to 0.0 for
         padding tokens, and 1.0 everywhere else.
     """
+    prefixes = tokenizer.encode_batch(prefixes)
+    max_len = max([len(i) for i in prefixes])
+    padded_prefixes = [[tokenizer.eot_token] * (max_len - len(i)) + i for i in prefixes]
 
-    generations = ...
+    batch_rem = len(prefixes) % batch_size
+    batch_padding = torch.ones(size=(batch_size - batch_rem, max_len))
+    batch_padding = batch_padding.masked_fill(batch_padding == 1, tokenizer.eot_token)
+
+    padded_prefixes = torch.tensor(padded_prefixes)
+    batch_prefixes = torch.cat((padded_prefixes, batch_padding), dim = 0)
+    batch_prefixes = batch_prefixes.reshape(-1, batch_size, max_len)
+
+    attn_mask = torch.ones_like(batch_prefixes)
+    attn_mask = attn_mask.masked_fill(batch_prefixes == tokenizer.eot_token, 0)
+
+    generations = model.forward(input_ids=batch_prefixes, attention_mask=attn_mask)
     return generations
 
 

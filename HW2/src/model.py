@@ -331,7 +331,8 @@ class DecoderLM(nn.Module):
         attn_weighted_values = pos_tok_embs
         for decoder_blocks in self.blocks:
             attn_weighted_values = decoder_blocks.forward(attn_weighted_values, attention_mask=attention_mask)
-        logits = self.token_logits(attn_weighted_values)
+        attn_weighted_values_norm = self.ln(attn_weighted_values)
+        logits = self.token_logits(attn_weighted_values_norm)
         return logits
 
     def _init_weights(self, module):

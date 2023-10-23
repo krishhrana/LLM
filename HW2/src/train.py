@@ -100,7 +100,7 @@ def cosine_lr_schedule(
             adjusted_step = t - num_warmup_steps
             cosine_decay = 0.5 * (1 + math.cos(math.pi * adjusted_step / (num_training_steps - num_warmup_steps)))
             lr = min_lr + (max_lr - min_lr) * cosine_decay
-        else:  # t >= num_training_steps
+        else:  
             lr = min_lr
         return lr
 

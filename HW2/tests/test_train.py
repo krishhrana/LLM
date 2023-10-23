@@ -12,6 +12,8 @@ from train import (
     train,
 )
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 def test_random_batch_sampler():
     tokens = torch.arange(100000)
@@ -104,7 +106,6 @@ def test_compute_language_modeling_loss():
 
 def test_train():
     """Fit the model on a trivially learnable dataset - checks drop in loss"""
-    device = "cpu"
     wandb.init(mode="disabled")
 
     # initialize tokenizer and model
