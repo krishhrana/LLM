@@ -38,8 +38,29 @@ def score(
         sequences have equal length. `attention_mask` should be set to 0.0 for
         padding tokens, and 1.0 everywhere else.
     """
+    texts = tokenizer.encode_batch(texts)
+    pad_token = tokenizer.eot_token
+    max_len = max([len(i) for i in texts])
+    texts = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in texts], dtype=torch.long)
 
-    return ...
+    pad_size = batch_size - (len(texts) % batch_size) if (len(texts) % batch_size) != 0 else 0
+    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long).fill_(pad_token)
+    texts = torch.cat((texts, batch_pad)).reshape(-1, batch_size, max_len)
+
+    attention_mask = torch.ones_like(texts).masked_fill(texts == pad_token, 0)
+    N, B, T = texts.shape
+    next_token_logits = torch.empty(size=(N, B, tokenizer.n_vocab))
+
+    for idx, batch in enumerate(texts):
+        batch_mask = attention_mask[idx]
+        logits = model.forward(input_ids=batch, attention_mask=batch_mask)
+        logit = logits[:, -1, :]
+        next_token_logits[idx] = logit
+
+    next_token_logits = next_token_logits.reshape(N * batch_size, tokenizer.n_vocab)
+    if pad_size != 0:
+        next_token_logits = next_token_logits[:-pad_size, :]
+    return next_token_logits
 
 
 def classify_binary_sentiment(
@@ -63,12 +84,12 @@ def classify_binary_sentiment(
     probs = logits[:, tokens_of_interest].softmax(1)
 
     if calibrate:
-        threshold = ...
+        threshold = 0.7
     else:
         threshold = 0.5
     
-    predictions = ...
-    return predictions
+    predictions = torch.argmax(probs, dim = -1)
+    return predictions.cpu().detach().tolist()
 
 
 def main():

@@ -60,29 +60,34 @@ def generate(
         sequences have equal length. `attention_mask` should be set to 0.0 for
         padding tokens, and 1.0 everywhere else.
     """
-    tokenized_prefix = tokenizer.encode_batch(prefixes)
-    max_len = max([len(i) for i in tokenized_prefix])
-    padded_prefixes = [[tokenizer.eot_token] * (max_len - len(i)) + i for i in tokenized_prefix]
-    padded_prefixes = torch.tensor(padded_prefixes)
+    prefixes = tokenizer.encode_batch(prefixes)
+    pad_token = tokenizer.eot_token
+    max_len = max([len(i) for i in prefixes])
+    prefixes = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in prefixes], dtype=torch.long)
 
-    batch_rem = len(tokenized_prefix) % batch_size
-    batch_padding = torch.ones(size=(batch_size - batch_rem, max_len))
-    batch_padding = batch_padding.masked_fill(batch_padding == 1, tokenizer.eot_token)
-    batch_prefixes = torch.cat((padded_prefixes, batch_padding), dim = 0)
-    batch_prefixes = batch_prefixes.reshape(-1, batch_size, max_len)
+    pad_size = batch_size - (len(prefixes) % batch_size) if (len(prefixes) % batch_size) != 0 else 0
+    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long).fill_(pad_token)
+    prefixes = torch.cat((prefixes, batch_pad)).reshape(-1, batch_size, max_len)
 
-    attn_mask = torch.ones_like(batch_prefixes)
-    attn_mask = attn_mask.masked_fill(batch_prefixes == tokenizer.eot_token, 0)
-    for i in range(max_new_tokens):
-        logits = model.forward(input_ids=batch_prefixes, attention_mask=attn_mask)
-        logit = logits[:, -1, :]
-        probs = softmax_with_temperature(logit)
-        predicted_token = torch.multinomial(probs, num_samples = 1) # (B, 1)
-        predicted_text = tokenizer.decode_batch()
+    attention_mask = torch.ones_like(prefixes).masked_fill(prefixes == pad_token, 0)
+    N, B, T = prefixes.shape
+    generations = torch.empty(size=(N, B, T + max_new_tokens), dtype = torch.long)
+    for idx, batch in enumerate(prefixes):
+        batch_mask = attention_mask[idx]
+        for i in range(max_new_tokens):
+            logits = model.forward(input_ids=batch, attention_mask=batch_mask)
+            logit = logits[:, -1, :] # (B, 1, C)
+            probs = F.softmax(logit, dim = -1)
+            next_token = torch.multinomial(probs, num_samples=1)
+            batch = torch.cat((batch, next_token), dim = 1) # (B, T + 1)
+            batch_mask = torch.cat((batch_mask, torch.ones_like(next_token)), dim = 1)
+        generations[idx] = batch
 
-
-
-
+    generations = generations.view(batch_size*N, -1)
+    if pad_size != 0:
+        generations = generations[:-pad_size, :]
+    generations = tokenizer.decode_batch(generations.cpu().detach().tolist())
+    generations = [i.replace('<|endoftext|>', "") for i in generations]
     return generations
 
 

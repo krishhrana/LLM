@@ -64,22 +64,20 @@ def test_sequential_batch_sampler():
 
 
 def test_cosine_lr_schedule():
-    num_warmup_steps, num_training_steps, min_lr, max_lr = 10, 2000, 1e-4, 5e-4
+    num_warmup_steps, num_training_steps, min_lr, max_lr = 5, 10, 0.01, 0.1
     schedule = cosine_lr_schedule(num_warmup_steps, num_training_steps, min_lr, max_lr)
-    lrs = [schedule(step) for step in range(3000)]
-    for e, i in enumerate(lrs):
-        if e % 100 == 0:
-            print(i)
+
+    lrs = [schedule(step) for step in range(15)]
     expected_lrs = [
         0.0,
         0.02,
         0.04,
         0.06,
         0.08,
-        0.1, # cosine 5, 0
-        0.091405, # 6, 1
-        0.068905, # 7, 2
-        0.041094, # 8, 3
+        0.1,
+        0.091405,
+        0.068905,
+        0.041094,
         0.018594,
         0.01,
         0.01,
