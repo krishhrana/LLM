@@ -60,22 +60,29 @@ def generate(
         sequences have equal length. `attention_mask` should be set to 0.0 for
         padding tokens, and 1.0 everywhere else.
     """
-    prefixes = tokenizer.encode_batch(prefixes)
-    max_len = max([len(i) for i in prefixes])
-    padded_prefixes = [[tokenizer.eot_token] * (max_len - len(i)) + i for i in prefixes]
+    tokenized_prefix = tokenizer.encode_batch(prefixes)
+    max_len = max([len(i) for i in tokenized_prefix])
+    padded_prefixes = [[tokenizer.eot_token] * (max_len - len(i)) + i for i in tokenized_prefix]
+    padded_prefixes = torch.tensor(padded_prefixes)
 
-    batch_rem = len(prefixes) % batch_size
+    batch_rem = len(tokenized_prefix) % batch_size
     batch_padding = torch.ones(size=(batch_size - batch_rem, max_len))
     batch_padding = batch_padding.masked_fill(batch_padding == 1, tokenizer.eot_token)
-
-    padded_prefixes = torch.tensor(padded_prefixes)
     batch_prefixes = torch.cat((padded_prefixes, batch_padding), dim = 0)
     batch_prefixes = batch_prefixes.reshape(-1, batch_size, max_len)
 
     attn_mask = torch.ones_like(batch_prefixes)
     attn_mask = attn_mask.masked_fill(batch_prefixes == tokenizer.eot_token, 0)
+    for i in range(max_new_tokens):
+        logits = model.forward(input_ids=batch_prefixes, attention_mask=attn_mask)
+        logit = logits[:, -1, :]
+        probs = softmax_with_temperature(logit)
+        predicted_token = torch.multinomial(probs, num_samples = 1) # (B, 1)
+        predicted_text = tokenizer.decode_batch()
 
-    generations = model.forward(input_ids=batch_prefixes, attention_mask=attn_mask)
+
+
+
     return generations
 
 
