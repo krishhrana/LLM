@@ -9,6 +9,7 @@ from tqdm import trange
 import torch.nn.functional as F
 from utils import determine_device, enable_tf32
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def softmax_with_temperature(
     logits: torch.FloatTensor, temperature: float
@@ -63,15 +64,15 @@ def generate(
     prefixes = tokenizer.encode_batch(prefixes)
     pad_token = tokenizer.eot_token
     max_len = max([len(i) for i in prefixes])
-    prefixes = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in prefixes], dtype=torch.long)
+    prefixes = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in prefixes], dtype=torch.long, device=device)
 
     pad_size = batch_size - (len(prefixes) % batch_size) if (len(prefixes) % batch_size) != 0 else 0
-    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long).fill_(pad_token)
+    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long, device = device).fill_(pad_token)
     prefixes = torch.cat((prefixes, batch_pad)).reshape(-1, batch_size, max_len)
 
-    attention_mask = torch.ones_like(prefixes).masked_fill(prefixes == pad_token, 0)
+    attention_mask = torch.ones_like(prefixes, device = device).masked_fill(prefixes == pad_token, 0)
     N, B, T = prefixes.shape
-    generations = torch.empty(size=(N, B, T + max_new_tokens), dtype = torch.long)
+    generations = torch.empty(size=(N, B, T + max_new_tokens), dtype = torch.long, device = device)
     for idx, batch in enumerate(prefixes):
         batch_mask = attention_mask[idx]
         for i in range(max_new_tokens):

@@ -51,7 +51,7 @@ class MultiHeadAttention(nn.Module):
         """
         B, T, C = x.shape
 
-        q = self.q_attn(x)
+        q = self.q_attn(x) 
         kT = self.k_attn(x)
         v = self.v_attn(x)
 
@@ -315,7 +315,7 @@ class DecoderLM(nn.Module):
         x = self.embed(input_ids=input_ids, attention_mask=attention_mask)
         for decoder_blocks in self.blocks:
             x = decoder_blocks.forward(x, attention_mask=attention_mask)
-        x = self.ln(x)
+        #x = self.ln(x)
         logits = self.token_logits(x)
         return logits
 

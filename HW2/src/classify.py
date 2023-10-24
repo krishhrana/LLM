@@ -8,6 +8,8 @@ from omegaconf import OmegaConf
 from tqdm import trange
 from utils import determine_device, enable_tf32
 
+device = 'cpu'
+
 YELP_TEMPLATE = "Here is a yelp review.\n{text}\nThis review is"
 YELP_LABEL_MAP = {0: " negative", 1: " positive"}
 
@@ -41,13 +43,13 @@ def score(
     texts = tokenizer.encode_batch(texts)
     pad_token = tokenizer.eot_token
     max_len = max([len(i) for i in texts])
-    texts = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in texts], dtype=torch.long)
+    texts = torch.tensor([[pad_token] * (max_len - len(i)) + i for i in texts], dtype=torch.long, device = device)
 
     pad_size = batch_size - (len(texts) % batch_size) if (len(texts) % batch_size) != 0 else 0
-    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long).fill_(pad_token)
+    batch_pad = torch.empty(size=(pad_size, max_len), dtype=torch.long, device = device).fill_(pad_token)
     texts = torch.cat((texts, batch_pad)).reshape(-1, batch_size, max_len)
 
-    attention_mask = torch.ones_like(texts).masked_fill(texts == pad_token, 0)
+    attention_mask = torch.ones_like(texts, device = device).masked_fill(texts == pad_token, 0)
     N, B, T = texts.shape
     next_token_logits = torch.empty(size=(N, B, tokenizer.n_vocab))
 
@@ -113,7 +115,7 @@ def main():
     tokenizer = tiktoken.get_encoding(config.tokenizer_encoding)
     device = determine_device() if config.device == "auto" else config.device
     model = DecoderLM(tokenizer.n_vocab, **config.model_config).to(device)
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location = 'cpu'))
 
     dataset = load_dataset("yelp_polarity")
     test_subset = (
