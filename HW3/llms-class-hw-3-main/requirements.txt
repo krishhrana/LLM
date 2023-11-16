@@ -1,0 +1,4 @@
+transformers==4.22.2
+torch
+tiktoken
+datasets
