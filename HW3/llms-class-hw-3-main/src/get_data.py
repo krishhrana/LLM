@@ -8,5 +8,3 @@ def fetch_data():
     train_split = dataset.select(range(0, int(len(dataset) * 0.95)))
 
     return train_split, val_split #dataset[:len(dataset) * 0.95], dataset[len(dataset) * 0.95:]
-
-    
