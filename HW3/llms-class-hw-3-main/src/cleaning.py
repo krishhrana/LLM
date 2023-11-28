@@ -15,6 +15,11 @@ def filter_noneng(text):
     non_english_regex = re.compile(r'[^\u0000-\u007F]+')
     return bool(non_english_regex.search(text))
  
-def clean_other(text):
-    """Add your own custom cleaning and/or filtering operations here."""
-    raise NotImplementedError()
+def clean_other(text, bad_words):
+    text = text.lower()
+    bad_words = set(bad_words)
+    bad_phrases = [b for b in bad_words if " " in b]
+    words = set(text.split())
+
+    contains = (len(words.intersection(bad_words)) > 0) or (any([bp in text for bp in bad_phrases]))
+    return not contains
