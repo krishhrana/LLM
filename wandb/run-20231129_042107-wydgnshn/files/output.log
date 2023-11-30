@@ -1,0 +1,27 @@
+
+model parameters = 82M
+train dataset tokens = 315M
+train FLOPs = 3.59e+16
+  0%|                                                                               | 0/2000 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 313, in <module>
+    main()
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 288, in main
+    train(
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 171, in train
+    logits = model.forward(input_ids=input_ids)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 317, in forward
+    x = decoder_blocks.forward(x, attention_mask=attention_mask)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 189, in forward
+    x = x + self.mha(self.ln_1(x))
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 111, in forward
+    attn_values = self.self_attention(q=q, kT=kT, v=v, attention_mask=attention_mask)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 84, in self_attention
+    attn_weights = F.softmax(attn_logits, dim = -1)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/functional.py", line 1856, in softmax
+    ret = input.softmax(dim)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.50 GiB. GPU 0 has a total capacty of 22.19 GiB of which 744.50 MiB is free. Including non-PyTorch memory, this process has 21.46 GiB memory in use. Of the allocated memory 20.16 GiB is allocated by PyTorch, and 280.18 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF

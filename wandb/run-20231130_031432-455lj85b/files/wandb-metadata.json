@@ -1,0 +1,90 @@
+{
+    "os": "Linux-5.15.0-1038-aws-x86_64-with-glibc2.31",
+    "python": "3.10.13",
+    "heartbeatAt": "2023-11-30T03:14:33.252109",
+    "startedAt": "2023-11-30T03:14:32.677549",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "/home/ubuntu/LLM/outputs/GPT-final-2/config.yaml"
+    ],
+    "state": "running",
+    "program": "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py",
+    "codePathLocal": "HW3/llms-class-hw-3-main/src/train/train.py",
+    "codePath": "HW3/llms-class-hw-3-main/src/train/train.py",
+    "git": {
+        "remote": "https://github.com/krishhrana/LLM.git",
+        "commit": "7032004b271c38186ae5fb467e649cbc9e5e77bb"
+    },
+    "email": null,
+    "root": "/home/ubuntu/LLM",
+    "host": "ip-172-31-14-219",
+    "username": "ubuntu",
+    "executable": "/home/ubuntu/miniconda3/envs/HW3/bin/python3",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 2804.553875,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2837.817,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2799.802,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 77.47649002075195,
+            "used": 59.60820007324219
+        }
+    },
+    "gpu": "NVIDIA A10G",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A10G",
+            "memory_total": 24146608128
+        }
+    ],
+    "memory": {
+        "total": 30.99468231201172
+    }
+}

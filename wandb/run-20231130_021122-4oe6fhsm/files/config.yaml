@@ -1,0 +1,65 @@
+wandb_version: 1
+
+output_dir:
+  desc: null
+  value: outputs/GPT-final-2
+tokenizer_encoding:
+  desc: null
+  value: gpt2
+model_config:
+  desc: null
+  value:
+    n_embd: 256
+    n_head: 16
+    n_positions: 128
+    n_layer: 8
+device:
+  desc: null
+  value: auto
+batch_size:
+  desc: null
+  value: 32
+seq_len:
+  desc: null
+  value: 128
+num_warmup_steps:
+  desc: null
+  value: 1000
+num_training_steps:
+  desc: null
+  value: 205000
+grad_accumulation_steps:
+  desc: null
+  value: 1
+min_lr:
+  desc: null
+  value: 1.0e-05
+max_lr:
+  desc: null
+  value: 0.0005
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.13
+    cli_version: 0.16.0
+    framework: huggingface
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1701310282.965599
+    t:
+      1:
+      - 1
+      - 55
+      2:
+      - 1
+      - 11
+      - 49
+      - 55
+      3:
+      - 16
+      - 23
+      4: 3.10.13
+      5: 0.16.0
+      8:
+      - 5
+      13: linux-x86_64

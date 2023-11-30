@@ -1,0 +1,44 @@
+
+model parameters = 19M
+train dataset tokens = 315M
+train FLOPs = 9.95e+16
+model saved to outputs/GPT-final-2/model.pt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+evaluating..: 4024it [01:13, 54.72it/s]
+evaluation results: {"val-loss": 4.524395081916339, "val-perplexity": 92.24011123740564}
+done!

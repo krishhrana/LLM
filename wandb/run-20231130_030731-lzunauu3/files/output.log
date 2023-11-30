@@ -1,0 +1,77 @@
+
+model parameters = 19M
+train dataset tokens = 315M
+train FLOPs = 9.95e+16
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  1%|▎                                  | 1653/205000 [01:41<3:28:52, 16.23it/s, train loss=6.50, TFLOPS=8.0]
+Traceback (most recent call last):
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 314, in <module>
+    main()
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 289, in main
+    train(
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 171, in train
+    logits = model.forward(input_ids=input_ids)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 317, in forward
+    x = decoder_blocks.forward(x, attention_mask=attention_mask)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 189, in forward
+    x = x + self.mha(self.ln_1(x))
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 111, in forward
+    attn_values = self.self_attention(q=q, kT=kT, v=v, attention_mask=attention_mask)
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/model.py", line 84, in self_attention
+    attn_weights = F.softmax(attn_logits, dim = -1)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/nn/functional.py", line 1856, in softmax
+    ret = input.softmax(dim)
+KeyboardInterrupt

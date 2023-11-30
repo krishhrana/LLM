@@ -1,0 +1,25 @@
+
+model parameters = 19M
+train dataset tokens = 315M
+train FLOPs = 9.95e+16
+Traceback (most recent call last):
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 531, in _check_seekable
+    f.seek(f.tell())
+AttributeError: 'collections.OrderedDict' object has no attribute 'seek'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 314, in <module>
+    main()
+  File "/home/ubuntu/LLM/HW3/llms-class-hw-3-main/src/train/train.py", line 301, in main
+    torch.load(model.state_dict(), model_path)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 986, in load
+    with _open_file_like(f, 'rb') as opened_file:
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 440, in _open_file_like
+    return _open_buffer_reader(name_or_buffer)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 425, in __init__
+    _check_seekable(buffer)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 534, in _check_seekable
+    raise_err_msg(["seek", "tell"], e)
+  File "/home/ubuntu/miniconda3/envs/HW3/lib/python3.10/site-packages/torch/serialization.py", line 527, in raise_err_msg
+    raise type(e)(msg)
+AttributeError: 'collections.OrderedDict' object has no attribute 'seek'. You can only torch.load from a file that is seekable. Please pre-load the data into a buffer like io.BytesIO and try to load from it instead.
