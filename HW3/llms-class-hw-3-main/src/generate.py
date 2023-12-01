@@ -121,12 +121,21 @@ def main():
 
     # Load Models
     if model_version == "original":
-        # TODO
-        generations = []
+        model_path = os.path.join(config.output_dir, "model.pt")
+        assert os.path.exists(model_path), f"no model checkpoint at {model_path}"
+        print(f"LOADING MODEL FROM: {model_path}")
+
+        model = DecoderLM(tokenizer.n_vocab, **config.model_config).to(device)
+        model.load_state_dict(torch.load(model_path))
+        model.eval()
+        generations = generate(model, config.model_config.n_positions, device, tokenizer, prefixes, config.batch_size, max_new_tokens, temperature)
+
 
     elif model_version == "cleaned":
         model_path = os.path.join(config.output_dir, "model.pt")
         assert os.path.exists(model_path), f"no model checkpoint at {model_path}"
+        print(f"LOADING MODEL FROM: {model_path}")
+
         model = DecoderLM(tokenizer.n_vocab, **config.model_config).to(device)
         model.load_state_dict(torch.load(model_path))
         model.eval()

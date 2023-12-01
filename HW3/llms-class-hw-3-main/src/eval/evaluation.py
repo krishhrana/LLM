@@ -52,21 +52,20 @@ parser.add_argument(
 
 args = parser.parse_args()
 config = args.config
-model_path = 'HW2/raw_model/model.pt'
+model_path = config.output_dir + "/model.pt"
+print(f"LOADING MODEL FROM: {model_path}")
 
 
 inputs = [
     '联合国生物多样性保护公约 (UNCBD) / 竹藤与生物多样 更多',
     'La isla Jekyll es hermosa y no puedo esperar a volver para explorarla un poco más.', 
-    '4129095867', 
-    'my@email.address', 
+    'Phone number:\n541-737-3748', 
+    'my@aol.com', 
     'School districts in New York, Pennsylvania California, Washington and other states said they were bracing for the supply shortages, which are expected to last into early 2024.'
 ]
 
 model = DecoderLM(tokenizer.n_vocab, **config.model_config).to(device)
 model.load_state_dict(torch.load(model_path))
-
-print(f'Loaded model from {model_path}')
 
 ppl = [get_perplexity(model, process_input(i)) for i in inputs]
 print(ppl)
