@@ -1,4 +1,6 @@
-from src.regex_cleaning import clean_pii
+import sys
+sys.path.append('llms-class-hw-3-main/src')
+from cleaning import clean_pii
 
 
 def test_phone_number_1():

@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from utils import count_params
+from .utils import count_params
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

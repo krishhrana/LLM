@@ -1,0 +1,15 @@
+output_dir: outputs/GPT-raw
+tokenizer_encoding: gpt2
+model_config:
+  n_embd: 256
+  n_head: 16
+  n_positions: 128
+  n_layer: 8
+device: auto
+batch_size: 32
+seq_len: 128
+num_warmup_steps: 1000
+num_training_steps: 205000
+grad_accumulation_steps: 1
+min_lr: 1.0e-05
+max_lr: 0.0005

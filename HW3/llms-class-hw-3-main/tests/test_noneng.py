@@ -1,6 +1,6 @@
 import sys
 sys.path.append('llms-class-hw-3-main/src')
-from src.cleaning import filter_noneng
+from cleaning import filter_noneng
 
 
 def test_japanese():

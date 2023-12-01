@@ -18,7 +18,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 3. Run `wandb login` to finish setting up weights & biases for experiment tracking (you will need to have a [weights & biases account](https://wandb.ai/login)).
-4. Download pre-tokenized training data: `curl https://huggingface.co/datasets/yimingzhang/llms-hw2/resolve/main/tokens.npz -o data/tokens.npz -L`
+4. Download pre-tokenized training data: `curl https://huggingface.co/datasets/yimingzhang/llms-hw2/resolve/main/tokens.npz -o data/tokens_raw.npz -L`
 
 *Note: To ensure that you have set up the Python environment correctly, you should run
 `pytest tests/test_env.py` and confirm that the test case passes.*

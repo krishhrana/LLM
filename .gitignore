@@ -13,3 +13,5 @@ HW3/llms-class-hw-3-main/src/train_data_tokenised/data-000011-of-00012.arrow
 HW3/llms-class-hw-3-main/src/train_data_tokenised/data-00011-of-00012.arrow
 outputs/GPT-final-2/model.pt
 outputs/GPT-tiny/model.pt
+wandb/*
+wandb/debug-internal.log

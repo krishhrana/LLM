@@ -246,7 +246,7 @@ def main():
     # prepare data and data generator
 
     assert config.seq_len <= config.model_config.n_positions
-    tokens = np.load("HW3/llms-class-hw-3-main/dataset/tokens_raw.npz")
+    tokens = np.load("/home/ubuntu/LLM/HW2/data/tokens_raw-yz.npz")
     train_tokens = torch.from_numpy(tokens["train"].astype(int))
     val_tokens = torch.from_numpy(tokens["val"].astype(int))
 

@@ -1,7 +1,6 @@
 import tiktoken 
 import sys
-sys.path.append('./HW3/llms-class-hw-3-main/src')
-
+sys.path.append('llms-class-hw-3-main/src')
 tokenizer = tiktoken.get_encoding('gpt2')
 
 from tokenization import return_duplicate_tokens
