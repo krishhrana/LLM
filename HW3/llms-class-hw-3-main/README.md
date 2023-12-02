@@ -1,7 +1,8 @@
 # 11-667 Homework 3
 
-Root contains the `cleaning.py` and `tokenization.py` for running autograder tests
-`src` all the training, graphing and evaluation code Specifically, 
+Root contains the `cleaning.py` and `tokenization.py` for running autograder tests. 
+
+`src`contains all the training, graphing and evaluation code Specifically, 
 
 1. model.py: Contains the model architecture whoch is similar to HW2
 2. generate.py: Code for performing batched generation
