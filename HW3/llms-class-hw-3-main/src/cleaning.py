@@ -3,6 +3,7 @@ import numpy as np
 from get_data import fetch_data
 import re
 import tiktoken
+
 num_proc = 8
 
 def clean_pii(text):

@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import time
 
-API_KEY = 'AIzaSyA4IEH4JXoKMWXFJLs4cafVQBfeGJH2Fys'
+API_KEY = 'API_KEY'
 url = f"https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key={API_KEY}"
 
 def get_toxicity(generation):

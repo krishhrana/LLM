@@ -3,7 +3,7 @@ import json
 import os
 import torch 
 import torch.nn.functional as F
-from train.model import DecoderLM
+from model import DecoderLM
 from omegaconf import OmegaConf
 import tiktoken
 import sys

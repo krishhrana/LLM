@@ -1,5 +1,12 @@
 # 11-667 Homework 3
 
-Starter code for HW 3 for Fall 2023.
+Root contains the `cleaning.py` and `tokenization.py` for running autograder tests
+`src` all the training, graphing and evaluation code Specifically, 
 
-Note that this does _not_ include code to train or decode from your model; you may use either your Homework 2 code or a Hugging Face/PyTorch implementation of your choice. 
+1. model.py: Contains the model architecture whoch is similar to HW2
+2. generate.py: Code for performing batched generation
+3. `src/tests/test_other.py`: Tests for the offensive words cleanup implemented in clean_other()
+4. clean_data.py: Implements the cleaning functions to the entire dataset
+5. evaluation.py: Code for evaluting the model in sample provided in the PDF to measure perplexity
+6. graphs.py: Perfoms data exploration and generates graphs required in the PDF
+7. toxicity: Gets the toxicity score use PerspectiveAPI

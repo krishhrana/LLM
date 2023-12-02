@@ -5,7 +5,6 @@ from contextlib import nullcontext
 import math
 import numpy as np
 import sys
-sys.path.append('HW3/llms-class-hw-3-main/src/train')
 from model import DecoderLM
 import argparse
 from omegaconf import OmegaConf
